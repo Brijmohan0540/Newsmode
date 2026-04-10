@@ -1,763 +1,1904 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NewsHub — Breaking News & Blogs</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--card:#16161f;--border:#2a2a3d;--accent:#e8b44a;--accent2:#c0392b;--text:#e8e8f0;--text2:#9090b0;--text3:#5a5a7a;--radius:6px;--shadow:0 4px 24px rgba(0,0,0,.4);}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Source Sans 3',sans-serif;min-height:100vh;}
-a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}button{cursor:pointer;border:none;font-family:inherit;}input,textarea,select{font-family:inherit;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-.site-header{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
-.header-top{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;gap:16px;}
-.logo-wrap{display:flex;align-items:center;gap:12px;flex-shrink:0;}
-.logo-img{width:44px;height:44px;border-radius:var(--radius);object-fit:cover;border:2px solid var(--accent);}
-.logo-text{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:var(--accent);letter-spacing:-1px;}
-.logo-text span{color:var(--accent2);}
-.search-bar{flex:1;max-width:480px;position:relative;}
-.search-bar input{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 16px 10px 42px;border-radius:24px;font-size:.95rem;outline:none;transition:.2s;}
-.search-bar input:focus{border-color:var(--accent);}
-.search-bar .s-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:1rem;}
-.header-actions{display:flex;align-items:center;gap:10px;}
-.btn{padding:9px 20px;border-radius:var(--radius);font-size:.9rem;font-weight:600;transition:.2s;}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);}
-.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-.btn-primary{background:var(--accent);color:#0a0a0f;}
-.btn-primary:hover{background:#d4a030;}
-.btn-danger{background:var(--accent2);color:#fff;}
-.btn-danger:hover{background:#a93226;}
-.btn-sm{padding:6px 14px;font-size:.82rem;}
-.nav-bar{background:var(--bg3);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;gap:0;overflow-x:auto;}
-.nav-bar a{padding:12px 18px;font-size:.88rem;font-weight:600;color:var(--text2);white-space:nowrap;border-bottom:2px solid transparent;transition:.2s;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;}
-.nav-bar a:hover,.nav-bar a.active{color:var(--accent);border-bottom-color:var(--accent);}
-.ticker{background:var(--accent2);padding:7px 0;display:flex;align-items:center;overflow:hidden;}
-.ticker-label{background:rgba(0,0,0,.3);color:#fff;font-weight:700;font-size:.82rem;padding:0 16px;white-space:nowrap;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
-.ticker-track{display:flex;gap:60px;animation:ticker 30s linear infinite;white-space:nowrap;}
-.ticker-track span{color:#fff;font-size:.85rem;font-weight:500;}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.main-layout{display:grid;grid-template-columns:1fr 320px;gap:28px;padding:28px 32px;max-width:1400px;margin:0 auto;}
-.section-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
-.section-title::before{content:'';width:4px;height:1.4rem;background:var(--accent);border-radius:2px;display:inline-block;}
-.trending-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:var(--radius);overflow:hidden;margin-bottom:32px;}
-.trending-main{position:relative;grid-row:span 2;}
-.trending-main .post-img{width:100%;height:380px;object-fit:cover;}
-.trending-secondary .post-img{width:100%;height:190px;object-fit:cover;}
-.post-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:24px 20px 20px;}
-.post-overlay .cat-tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;}
-.post-overlay .post-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;line-height:1.3;color:#fff;}
-.post-overlay .post-meta{font-size:.78rem;color:#aaa;margin-top:8px;}
-.trending-secondary{position:relative;}
-.trending-secondary .post-card-info{padding:12px 14px;background:var(--card);border-top:1px solid var(--border);}
-.trending-secondary .post-card-info .cat-tag{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent2);margin-bottom:4px;}
-.trending-secondary .post-card-info .post-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.3;color:var(--text);}
-.trending-secondary .post-card-info .post-meta{font-size:.75rem;color:var(--text3);margin-top:4px;}
-.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;}
-.post-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:.2s;cursor:pointer;}
-.post-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow);}
-.post-card .post-img{width:100%;height:160px;object-fit:cover;}
-.post-card-body{padding:14px;}
-.cat-tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:6px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NewsHub — Breaking News & Blogs</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --bg3: #1a1a26;
+      --card: #16161f;
+      --border: #2a2a3d;
+      --accent: #e8b44a;
+      --accent2: #c0392b;
+      --text: #e8e8f0;
+      --text2: #9090b0;
+      --text3: #5a5a7a;
+      --radius: 6px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, .4);
+    }
 
-.post-card-body .post-excerpt{
-  font-size:.82rem;
-  color:var(--text2);
-  line-height:1.5;
-  margin-bottom:10px;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  line-clamp:2;
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-.post-card-body .post-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px;}
-/* /* .post-card-body .post-excerpt{font-size:.82rem;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;} */
-.post-meta{font-size:.75rem;color:var(--text3);display:flex;gap:10px;align-items:center;}
-.post-meta .author{color:var(--text2);font-weight:600;}
-.sidebar-widget{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:22px;}
-.sidebar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
-.contact-form label{display:block;font-size:.82rem;font-weight:600;color:var(--text2);margin-bottom:5px;margin-top:12px;}
-.contact-form input,.contact-form textarea{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:var(--radius);font-size:.87rem;outline:none;transition:.2s;}
-.contact-form input:focus,.contact-form textarea:focus{border-color:var(--accent);}
-.contact-form textarea{resize:vertical;min-height:80px;}
-.popular-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
-.popular-item:last-child{border-bottom:none;}
-.popular-num{font-family:'JetBrains Mono',monospace;font-size:1.5rem;font-weight:600;color:var(--border);flex-shrink:0;width:30px;}
-.popular-title{font-size:.87rem;font-weight:600;color:var(--text);line-height:1.3;cursor:pointer;}
-.popular-title:hover{color:var(--accent);}
-.popular-meta{font-size:.75rem;color:var(--text3);margin-top:3px;}
-.cat-pills{display:flex;flex-wrap:wrap;gap:8px;}
-.cat-pill{padding:5px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:24px;font-size:.8rem;font-weight:600;color:var(--text2);cursor:pointer;transition:.2s;}
-.cat-pill:hover{background:var(--accent);color:#0a0a0f;border-color:var(--accent);}
-.site-footer{background:var(--bg2);border-top:1px solid var(--border);margin-top:40px;}
-.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding:48px 32px 32px;}
-.footer-brand p{font-size:.87rem;color:var(--text2);line-height:1.6;max-width:280px;margin-top:10px;}
-.footer-social{display:flex;gap:10px;margin-top:16px;}
-.social-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--text2);cursor:pointer;transition:.2s;}
-.social-btn:hover{background:var(--accent);color:#0a0a0f;border-color:var(--accent);}
-.footer-col h4{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:14px;}
-.footer-col ul{list-style:none;}
-.footer-col ul li{margin-bottom:8px;}
-.footer-col ul li a{font-size:.87rem;color:var(--text2);transition:.2s;}
-.footer-col ul li a:hover{color:var(--accent);}
-.footer-bottom{border-top:1px solid var(--border);padding:18px 32px;display:flex;justify-content:space-between;align-items:center;}
-.footer-bottom p{font-size:.82rem;color:var(--text3);}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-overlay.show{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:10px;width:90%;max-width:540px;max-height:90vh;overflow-y:auto;position:relative;}
-.modal-wide{max-width:800px;}
-.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.modal-header h2{font-family:'Playfair Display',serif;font-size:1.3rem;}
-.modal-close{background:var(--bg3);border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:50%;font-size:1.1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.modal-body{padding:24px;}
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:.83rem;font-weight:600;color:var(--text2);margin-bottom:6px;}
-.form-group input,.form-group textarea,.form-group select{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:var(--radius);font-size:.9rem;outline:none;transition:.2s;}
-.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);}
-.form-group textarea{min-height:120px;resize:vertical;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;} 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Source Sans 3', sans-serif;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    input,
+    textarea,
+    select {
+      font-family: inherit;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .site-header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      gap: 16px;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      border: 2px solid var(--accent);
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -1px;
+    }
+
+    .logo-text span {
+      color: var(--accent2);
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 16px 10px 42px;
+      border-radius: 24px;
+      font-size: .95rem;
+      outline: none;
+      transition: .2s;
+    }
+
+    .search-bar input:focus {
+      border-color: var(--accent);
+    }
+
+    .search-bar .s-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3);
+      font-size: 1rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 9px 20px;
+      border-radius: var(--radius);
+      font-size: .9rem;
+      font-weight: 600;
+      transition: .2s;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0a0a0f;
+    }
+
+    .btn-primary:hover {
+      background: #d4a030;
+    }
+
+    .btn-danger {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #a93226;
+    }
+
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: .82rem;
+    }
+
+    .nav-bar {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .nav-bar a {
+      padding: 12px 18px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text2);
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: .2s;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .nav-bar a:hover,
+    .nav-bar a.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .ticker {
+      background: var(--accent2);
+      padding: 7px 0;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .ticker-label {
+      background: rgba(0, 0, 0, .3);
+      color: #fff;
+      font-weight: 700;
+      font-size: .82rem;
+      padding: 0 16px;
+      white-space: nowrap;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 60px;
+      animation: ticker 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-track span {
+      color: #fff;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+
+    @keyframes ticker {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 28px;
+      padding: 28px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 1.4rem;
+      background: var(--accent);
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .trending-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+
+    .trending-main {
+      position: relative;
+      grid-row: span 2;
+    }
+
+    .trending-main .post-img {
+      width: 100%;
+      height: 380px;
+      object-fit: cover;
+    }
+
+    .trending-secondary .post-img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+    }
+
+    .post-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, .9));
+      padding: 24px 20px 20px;
+    }
+
+    .post-overlay .cat-tag {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .post-overlay .post-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #fff;
+    }
+
+    .post-overlay .post-meta {
+      font-size: .78rem;
+      color: #aaa;
+      margin-top: 8px;
+    }
+
+    .trending-secondary {
+      position: relative;
+    }
+
+    .trending-secondary .post-card-info {
+      padding: 12px 14px;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+    }
+
+    .trending-secondary .post-card-info .cat-tag {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 4px;
+    }
+
+    .trending-secondary .post-card-info .post-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .trending-secondary .post-card-info .post-meta {
+      font-size: .75rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .post-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: .2s;
+      cursor: pointer;
+    }
+
+    .post-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .post-card .post-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .post-card-body {
+      padding: 14px;
+    }
+
+    .cat-tag {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent2);
+      margin-bottom: 6px;
+    }
+
+    .post-card-body .post-excerpt {
+      font-size: .82rem;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-clamp: 2;
+    }
+
+    .post-card-body .post-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    /* /* .post-card-body .post-excerpt{font-size:.82rem;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;} */
+    .post-meta {
+      font-size: .75rem;
+      color: var(--text3);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .post-meta .author {
+      color: var(--text2);
+      font-weight: 600;
+    }
+
+    .sidebar-widget {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .sidebar-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .contact-form label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 5px;
+      margin-top: 12px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      font-size: .87rem;
+      outline: none;
+      transition: .2s;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .popular-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .popular-item:last-child {
+      border-bottom: none;
+    }
+
+    .popular-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--border);
+      flex-shrink: 0;
+      width: 30px;
+    }
+
+    .popular-title {
+      font-size: .87rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+      cursor: pointer;
+    }
+
+    .popular-title:hover {
+      color: var(--accent);
+    }
+
+    .popular-meta {
+      font-size: .75rem;
+      color: var(--text3);
+      margin-top: 3px;
+    }
+
+    .cat-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cat-pill {
+      padding: 5px 13px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text2);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .cat-pill:hover {
+      background: var(--accent);
+      color: #0a0a0f;
+      border-color: var(--accent);
+    }
+
+    .site-footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      padding: 48px 32px 32px;
+    }
+
+    .footer-brand p {
+      font-size: .87rem;
+      color: var(--text2);
+      line-height: 1.6;
+      max-width: 280px;
+      margin-top: 10px;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .social-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      color: var(--text2);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .social-btn:hover {
+      background: var(--accent);
+      color: #0a0a0f;
+      border-color: var(--accent);
+    }
+
+    .footer-col h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 8px;
+    }
+
+    .footer-col ul li a {
+      font-size: .87rem;
+      color: var(--text2);
+      transition: .2s;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-bottom p {
+      font-size: .82rem;
+      color: var(--text3);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .7);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 90%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-wide {
+      max-width: 800px;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: .83rem;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: .9rem;
+      outline: none;
+      transition: .2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
 
 
-.post-card-body .post-excerpt{
-  font-size:.82rem;
-  color:var(--text2);
-  line-height:1.5;
-  margin-bottom:10px;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-  line-clamp:2;
-}
+    .post-card-body .post-excerpt {
+      font-size: .82rem;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-clamp: 2;
+    }
 
-.post-card-body .post-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px;}
-/* removed duplicate .post-card-body .post-excerpt block here */
-.post-meta{font-size:.75rem;color:var(--text3);display:flex;gap:10px;align-items:center;}
+    .post-card-body .post-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    /* removed duplicate .post-card-body .post-excerpt block here */
+    .post-meta {
+      font-size: .75rem;
+      color: var(--text3);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
 
 
-.editor-toolbar{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
-.editor-toolbar button{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:4px;font-size:.8rem;transition:.2s;}
-.editor-toolbar button:hover{background:var(--accent);color:#000;border-color:var(--accent);}
-.editor-content{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);min-height:200px;padding:12px;outline:none;color:var(--text);font-size:.92rem;line-height:1.6;}
-.editor-content:focus{border-color:var(--accent);}
-.editor-content h2,.editor-content h3{font-family:'Playfair Display',serif;margin:10px 0 6px;}
-.editor-content p{margin-bottom:8px;}
-.admin-overlay{display:none;position:fixed;inset:0;z-index:600;background:var(--bg);}
-.admin-overlay.show{display:flex;}
-.admin-sidebar-nav{width:240px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
-.admin-logo{padding:20px;border-bottom:1px solid var(--border);}
-.admin-nav{padding:12px 0;flex:1;}
-.admin-nav a{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:.88rem;font-weight:600;color:var(--text2);transition:.2s;cursor:pointer;}
-.admin-nav a:hover,.admin-nav a.active{color:var(--accent);background:rgba(232,180,74,.07);}
-.admin-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.admin-topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;}
-.admin-topbar h1{font-family:'Playfair Display',serif;font-size:1.3rem;}
-.admin-content{flex:1;overflow-y:auto;padding:24px;}
-.admin-section{display:none;}
-.admin-section.active{display:block;}
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
-.stat-card .stat-val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--accent);}
-.stat-card .stat-label{font-size:.82rem;color:var(--text2);margin-top:4px;}
-.data-table{width:100%;border-collapse:collapse;}
-.data-table th{background:var(--bg3);color:var(--text2);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);}
-.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:.87rem;vertical-align:middle;}
-.data-table tr:hover td{background:rgba(255,255,255,.02);}
-.badge{padding:3px 10px;border-radius:24px;font-size:.73rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.badge-green{background:rgba(39,174,96,.15);color:#27ae60;}
-.badge-yellow{background:rgba(232,180,74,.15);color:var(--accent);}
-.badge-red{background:rgba(192,57,43,.15);color:var(--accent2);}
-.table-actions{display:flex;gap:6px;}
-.post-detail{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;}
-.post-detail.show{display:block;}
-.post-detail-inner{max-width:900px;margin:0 auto;padding:32px;}
-.post-detail-img{width:100%;height:420px;object-fit:cover;border-radius:var(--radius);margin-bottom:28px;}
-.post-detail h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;line-height:1.2;margin-bottom:16px;}
-.post-detail-meta{display:flex;gap:16px;color:var(--text2);font-size:.87rem;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
-.post-detail-content{font-size:1.05rem;line-height:1.75;color:var(--text);}
-.post-detail-content h2{font-family:'Playfair Display',serif;font-size:1.5rem;margin:24px 0 12px;}
-.post-detail-content p{margin-bottom:16px;}
-.alert{padding:12px 16px;border-radius:var(--radius);font-size:.87rem;font-weight:600;margin-bottom:14px;display:none;}
-.alert-success{background:rgba(39,174,96,.15);border:1px solid #27ae60;color:#27ae60;}
-.alert-error{background:rgba(192,57,43,.15);border:1px solid var(--accent2);color:var(--accent2);}
-.search-results{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin-top:4px;overflow:hidden;display:none;z-index:200;box-shadow:var(--shadow);}
-.search-result-item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:.15s;}
-.search-result-item:hover{background:var(--bg3);}
-.sr-cat{font-size:.7rem;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;}
-.sr-title{font-size:.9rem;font-weight:600;color:var(--text);}
-.notif{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#000;padding:12px 20px;border-radius:var(--radius);font-weight:700;font-size:.9rem;z-index:9999;transform:translateY(80px);opacity:0;transition:.3s;pointer-events:none;}
-.notif.show{transform:translateY(0);opacity:1;}
-@media(max-width:900px){.main-layout{grid-template-columns:1fr;}.sidebar{display:none;}.trending-grid{grid-template-columns:1fr;}.posts-grid{grid-template-columns:1fr 1fr;}.footer-main{grid-template-columns:1fr 1fr;}.stats-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:600px){.header-top{padding:12px 16px;flex-wrap:wrap;}.main-layout{padding:16px;}.posts-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}}
-</style>
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .editor-toolbar button {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: .8rem;
+      transition: .2s;
+    }
+
+    .editor-toolbar button:hover {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    .editor-content {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-height: 200px;
+      padding: 12px;
+      outline: none;
+      color: var(--text);
+      font-size: .92rem;
+      line-height: 1.6;
+    }
+
+    .editor-content:focus {
+      border-color: var(--accent);
+    }
+
+    .editor-content h2,
+    .editor-content h3 {
+      font-family: 'Playfair Display', serif;
+      margin: 10px 0 6px;
+    }
+
+    .editor-content p {
+      margin-bottom: 8px;
+    }
+
+    .admin-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      background: var(--bg);
+    }
+
+    .admin-overlay.show {
+      display: flex;
+    }
+
+    .admin-sidebar-nav {
+      width: 240px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .admin-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .admin-nav {
+      padding: 12px 0;
+      flex: 1;
+    }
+
+    .admin-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 20px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text2);
+      transition: .2s;
+      cursor: pointer;
+    }
+
+    .admin-nav a:hover,
+    .admin-nav a.active {
+      color: var(--accent);
+      background: rgba(232, 180, 74, .07);
+    }
+
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .admin-topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-topbar h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+    }
+
+    .admin-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .stat-card .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-card .stat-label {
+      font-size: .82rem;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      background: var(--bg3);
+      color: var(--text2);
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: .87rem;
+      vertical-align: middle;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .badge {
+      padding: 3px 10px;
+      border-radius: 24px;
+      font-size: .73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .badge-green {
+      background: rgba(39, 174, 96, .15);
+      color: #27ae60;
+    }
+
+    .badge-yellow {
+      background: rgba(232, 180, 74, .15);
+      color: var(--accent);
+    }
+
+    .badge-red {
+      background: rgba(192, 57, 43, .15);
+      color: var(--accent2);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .post-detail {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    .post-detail.show {
+      display: block;
+    }
+
+    .post-detail-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    .post-detail-img {
+      width: 100%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-bottom: 28px;
+    }
+
+    .post-detail h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .post-detail-meta {
+      display: flex;
+      gap: 16px;
+      color: var(--text2);
+      font-size: .87rem;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .post-detail-content {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    .post-detail-content h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin: 24px 0 12px;
+    }
+
+    .post-detail-content p {
+      margin-bottom: 16px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: .87rem;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .alert-success {
+      background: rgba(39, 174, 96, .15);
+      border: 1px solid #27ae60;
+      color: #27ae60;
+    }
+
+    .alert-error {
+      background: rgba(192, 57, 43, .15);
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-top: 4px;
+      overflow: hidden;
+      display: none;
+      z-index: 200;
+      box-shadow: var(--shadow);
+    }
+
+    .search-result-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: .15s;
+    }
+
+    .search-result-item:hover {
+      background: var(--bg3);
+    }
+
+    .sr-cat {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .sr-title {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .notif {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent);
+      color: #000;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: .9rem;
+      z-index: 9999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: .3s;
+      pointer-events: none;
+    }
+
+    .notif.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    @media(max-width:900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .trending-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .posts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-main {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media(max-width:600px) {
+      .header-top {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+      }
+
+      .main-layout {
+        padding: 16px;
+      }
+
+      .posts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<header class="site-header">
-  <div class="header-top">
-    <div class="logo-wrap">
-      <img id="siteLogo" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=80&h=80&fit=crop" class="logo-img" alt="Logo">
-      <div class="logo-text" id="siteName">News<span>Hub</span></div>
-    </div>
-    <div class="search-bar">
-      <span class="s-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search news, articles, topics…" autocomplete="off">
-      <div class="search-results" id="searchResults"></div>
-    </div>
-    <div class="header-actions" id="headerActions">
-      <button class="btn btn-ghost" onclick="openModal('loginModal')">Sign In</button>
-      <button class="btn btn-primary" onclick="openModal('registerModal')">Register</button>
-    </div>
-  </div>
-  <nav class="nav-bar">
-    <a class="active" onclick="filterCat('all',this)">All</a>
-    <a onclick="filterCat('Technology',this)">Technology</a>
-    <a onclick="filterCat('Politics',this)">Politics</a>
-    <a onclick="filterCat('Science',this)">Science</a>
-    <a onclick="filterCat('Business',this)">Business</a>
-    <a onclick="filterCat('Health',this)">Health</a>
-    <a onclick="filterCat('Sports',this)">Sports</a>
-    <a onclick="filterCat('Entertainment',this)">Entertainment</a>
-    <a onclick="filterCat('World',this)">World</a>
-  </nav>
-</header>
-
-<div class="ticker">
-  <div class="ticker-label">🔴 LIVE</div>
-  <div style="overflow:hidden;flex:1;">
-    <div class="ticker-track" id="tickerTrack">
-      <span>🚀 India's space mission achieves record milestone in lunar exploration</span>
-      <span>💰 Global markets rally as inflation data shows signs of cooling</span>
-      <span>🤖 AI breakthrough: New model surpasses human performance in complex reasoning</span>
-      <span>🌍 World leaders gather for climate summit amid rising concerns</span>
-      <span>⚡ Renewable energy hits all-time high, powering 40% of global electricity</span>
-      <span>🏆 Champions League final: Shocking upset sends fans into frenzy</span>
-      <span>🚀 India's space mission achieves record milestone in lunar exploration</span>
-      <span>💰 Global markets rally as inflation data shows signs of cooling</span>
-      <span>🤖 AI breakthrough: New model surpasses human performance in complex reasoning</span>
-      <span>🌍 World leaders gather for climate summit amid rising concerns</span>
-    </div>
-  </div>
-</div>
-
-<main class="main-layout">
-  <div class="content-area">
-    <div class="section-title">🔥 Trending Now</div>
-    <div class="trending-grid" id="trendingGrid"></div>
-    <div class="section-title" id="latestTitle">📰 Latest Stories</div>
-    <div class="posts-grid" id="postsGrid"></div>
-  </div>
-  <aside class="sidebar">
-    <div class="sidebar-widget" id="sidebarWidget"></div>
-    <div class="sidebar-widget">
-      <div class="sidebar-title">🏅 Popular This Week</div>
-      <div id="popularList"></div>
-    </div>
-    <div class="sidebar-widget">
-      <div class="sidebar-title">📁 Categories</div>
-      <div class="cat-pills" id="catPills"></div>
-    </div>
-    <div class="sidebar-widget" style="background:linear-gradient(135deg,var(--accent2),#8e1a0e);border-color:var(--accent2);">
-      <div style="color:#fff;">
-        <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;">📬 Newsletter</div>
-        <p style="font-size:.85rem;opacity:.85;margin-bottom:12px;line-height:1.5;">Get top stories delivered to your inbox daily.</p>
-        <input type="email" placeholder="Your email address" style="width:100%;padding:9px 12px;border-radius:var(--radius);border:none;background:rgba(255,255,255,.15);color:#fff;font-size:.87rem;outline:none;margin-bottom:8px;">
-        <button class="btn btn-primary" style="width:100%;" onclick="showNotif('✅ Subscribed successfully!')">Subscribe</button>
+  <header class="site-header">
+    <div class="header-top">
+      <div class="logo-wrap">
+        <img id="siteLogo" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=80&h=80&fit=crop"
+          class="logo-img" alt="Logo">
+        <div class="logo-text" id="siteName">News<span>Hub</span></div>
+      </div>
+      <div class="search-bar">
+        <span class="s-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search news, articles, topics…" autocomplete="off">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="header-actions" id="headerActions">
+        <button class="btn btn-ghost" onclick="openModal('loginModal')">Sign In</button>
+        <button class="btn btn-primary" onclick="openModal('registerModal')">Register</button>
       </div>
     </div>
-  </aside>
-</main>
-
-<footer class="site-footer">
-  <div class="footer-main">
-    <div class="footer-brand">
-      <div class="logo-text">News<span>Hub</span></div>
-      <p>Your trusted source for breaking news, in-depth analysis, and insightful blogs. Covering stories that matter most.</p>
-      <div class="footer-social">
-        <div class="social-btn">𝕏</div><div class="social-btn">f</div><div class="social-btn">📷</div><div class="social-btn">▶</div><div class="social-btn">in</div>
-      </div>
-    </div>
-    <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="#">Home</a></li><li><a href="#">About Us</a></li><li><a href="#">Write for Us</a></li><li><a href="#">Advertise</a></li><li><a href="#">Contact</a></li></ul></div>
-    <div class="footer-col"><h4>Categories</h4><ul><li><a href="#">Technology</a></li><li><a href="#">Politics</a></li><li><a href="#">Business</a></li><li><a href="#">Science</a></li><li><a href="#">Health</a></li></ul></div>
-    <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Cookie Policy</a></li><li><a href="#">Disclaimer</a></li><li><a href="#">DMCA</a></li></ul></div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2026 NewsHub. All rights reserved. Crafted with ❤️ for the world.</p>
-    <p>Powered by NewsHub CMS v2.0</p>
-  </div>
-</footer>
-
-<!-- POST DETAIL -->
-<div class="post-detail" id="postDetail">
-  <div class="post-detail-inner">
-    <div style="margin-bottom:24px;"><button class="btn btn-ghost" onclick="closePostDetail()">← Back to Home</button></div>
-    <img id="pdImg" src="" class="post-detail-img" alt="">
-    <div style="margin-bottom:12px;" id="pdCat"></div>
-    <h1 id="pdTitle"></h1>
-    <div class="post-detail-meta" id="pdMeta"></div>
-    <div class="post-detail-content" id="pdContent"></div>
-  </div>
-</div>
-
-<!-- LOGIN -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal">
-    <div class="modal-header"><h2>Sign In to NewsHub</h2><button class="modal-close" onclick="closeModal('loginModal')">✕</button></div>
-    <div class="modal-body">
-      <div class="alert alert-error" id="loginError"></div>
-      <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter password"></div>
-      <p style="font-size:.8rem;color:var(--text3);margin-top:8px;">Admin: admin@newshub.com / admin123</p>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('loginModal')">Cancel</button><button class="btn btn-primary" onclick="doLogin()">Sign In</button></div>
-  </div>
-</div>
-
-<!-- REGISTER -->
-<div class="modal-overlay" id="registerModal">
-  <div class="modal">
-    <div class="modal-header"><h2>Create Account</h2><button class="modal-close" onclick="closeModal('registerModal')">✕</button></div>
-    <div class="modal-body">
-      <div class="alert alert-error" id="regError"></div>
-      <div class="form-row">
-        <div class="form-group"><label>First Name</label><input type="text" id="regFname" placeholder="John"></div>
-        <div class="form-group"><label>Last Name</label><input type="text" id="regLname" placeholder="Doe"></div>
-      </div>
-      <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
-      <div class="form-group"><label>Password</label><input type="password" id="regPass" placeholder="Min 6 characters"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('registerModal')">Cancel</button><button class="btn btn-primary" onclick="doRegister()">Create Account</button></div>
-  </div>
-</div>
-
-<!-- CREATE POST -->
-<div class="modal-overlay" id="createPostModal">
-  <div class="modal modal-wide">
-    <div class="modal-header"><h2 id="createPostTitle">✍️ Write New Post</h2><button class="modal-close" onclick="closeModal('createPostModal')">✕</button></div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label>Post Title *</label><input type="text" id="postTitle" placeholder="Enter compelling headline…"></div>
-        <div class="form-group"><label>Category *</label>
-          <select id="postCategory"><option value="">Select category</option><option>Technology</option><option>Politics</option><option>Science</option><option>Business</option><option>Health</option><option>Sports</option><option>Entertainment</option><option>World</option></select>
-        </div>
-      </div>
-      <div class="form-group"><label>Cover Image URL</label><input type="url" id="postImage" placeholder="https://... (leave blank for default)"></div>
-      <div class="form-group"><label>Excerpt (short description)</label><input type="text" id="postExcerpt" placeholder="Brief summary shown on cards…"></div>
-      <div class="form-group">
-        <label>Content *</label>
-        <div class="editor-toolbar">
-          <button onclick="fmt('bold')"><b>B</b></button>
-          <button onclick="fmt('italic')"><i>I</i></button>
-          <button onclick="fmt('underline')"><u>U</u></button>
-          <button onclick="fmtBlock('h2')">H2</button>
-          <button onclick="fmtBlock('h3')">H3</button>
-          <button onclick="fmtBlock('p')">¶ P</button>
-          <button onclick="fmt('insertUnorderedList')">• List</button>
-          <button onclick="fmt('insertOrderedList')">1. List</button>
-          <button onclick="fmt('strikeThrough')"><s>S</s></button>
-        </div>
-        <div class="editor-content" id="postContent" contenteditable="true"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>Tags (comma-separated)</label><input type="text" id="postTags" placeholder="AI, technology, future"></div>
-        <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:24px;">
-          <input type="checkbox" id="postTrending" style="width:auto;accent-color:var(--accent);">
-          <label for="postTrending" style="margin:0;cursor:pointer;">🔥 Mark as Trending</label>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('createPostModal')">Cancel</button><button class="btn btn-primary" onclick="savePost()">Publish Post</button></div>
-  </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div class="admin-overlay" id="adminPanel">
-  <div class="admin-sidebar-nav">
-    <div class="admin-logo">
-      <div class="logo-text">News<span>Hub</span></div>
-      <small style="font-size:.75rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">Admin Panel</small>
-    </div>
-    <nav class="admin-nav">
-      <a onclick="adminTab('dashboard')" class="active" id="atab-dashboard"><span>📊</span> Dashboard</a>
-      <a onclick="adminTab('posts')" id="atab-posts"><span>📝</span> All Posts</a>
-      <a onclick="adminTab('users')" id="atab-users"><span>👥</span> Users</a>
-      <a onclick="adminTab('contacts')" id="atab-contacts"><span>📬</span> Messages</a>
-      <a onclick="adminTab('settings')" id="atab-settings"><span>⚙️</span> Settings</a>
+    <nav class="nav-bar">
+      <a class="active" onclick="filterCat('all',this)">All</a>
+      <a onclick="filterCat('Technology',this)">Technology</a>
+      <a onclick="filterCat('Politics',this)">Politics</a>
+      <a onclick="filterCat('Science',this)">Science</a>
+      <a onclick="filterCat('Business',this)">Business</a>
+      <a onclick="filterCat('Health',this)">Health</a>
+      <a onclick="filterCat('Sports',this)">Sports</a>
+      <a onclick="filterCat('Entertainment',this)">Entertainment</a>
+      <a onclick="filterCat('World',this)">World</a>
     </nav>
-  </div>
-  <div class="admin-main">
-    <div class="admin-topbar">
-      <h1 id="adminTabTitle">📊 Dashboard</h1>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <span style="font-size:.85rem;color:var(--text2);">Logged in as <strong style="color:var(--accent);">Admin</strong></span>
-        <button class="btn btn-ghost btn-sm" onclick="closeAdmin()">← Back to Site</button>
+  </header>
+
+  <div class="ticker">
+    <div class="ticker-label">🔴 LIVE</div>
+    <div style="overflow:hidden;flex:1;">
+      <div class="ticker-track" id="tickerTrack">
+        <span>🚀 India's space mission achieves record milestone in lunar exploration</span>
+        <span>💰 Global markets rally as inflation data shows signs of cooling</span>
+        <span>🤖 AI breakthrough: New model surpasses human performance in complex reasoning</span>
+        <span>🌍 World leaders gather for climate summit amid rising concerns</span>
+        <span>⚡ Renewable energy hits all-time high, powering 40% of global electricity</span>
+        <span>🏆 Champions League final: Shocking upset sends fans into frenzy</span>
+        <span>🚀 India's space mission achieves record milestone in lunar exploration</span>
+        <span>💰 Global markets rally as inflation data shows signs of cooling</span>
+        <span>🤖 AI breakthrough: New model surpasses human performance in complex reasoning</span>
+        <span>🌍 World leaders gather for climate summit amid rising concerns</span>
       </div>
     </div>
-    <div class="admin-content">
+  </div>
 
-      <div class="admin-section active" id="asec-dashboard">
-        <div class="stats-row" id="statsRow"></div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
-          <div class="sidebar-title" style="border:none;padding:0;margin-bottom:16px;">📋 Recent Posts</div>
-          <div id="recentActivity"></div>
+  <main class="main-layout">
+    <div class="content-area">
+      <div class="section-title">🔥 Trending Now</div>
+      <div class="trending-grid" id="trendingGrid"></div>
+      <div class="section-title" id="latestTitle">📰 Latest Stories</div>
+      <div class="posts-grid" id="postsGrid"></div>
+    </div>
+    <aside class="sidebar">
+      <div class="sidebar-widget" id="sidebarWidget"></div>
+      <div class="sidebar-widget">
+        <div class="sidebar-title">🏅 Popular This Week</div>
+        <div id="popularList"></div>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-title">📁 Categories</div>
+        <div class="cat-pills" id="catPills"></div>
+      </div>
+      <div class="sidebar-widget"
+        style="background:linear-gradient(135deg,var(--accent2),#8e1a0e);border-color:var(--accent2);">
+        <div style="color:#fff;">
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;">📬
+            Newsletter</div>
+          <p style="font-size:.85rem;opacity:.85;margin-bottom:12px;line-height:1.5;">Get top stories delivered to your
+            inbox daily.</p>
+          <input type="email" placeholder="Your email address"
+            style="width:100%;padding:9px 12px;border-radius:var(--radius);border:none;background:rgba(255,255,255,.15);color:#fff;font-size:.87rem;outline:none;margin-bottom:8px;">
+          <button class="btn btn-primary" style="width:100%;"
+            onclick="showNotif('✅ Subscribed successfully!')">Subscribe</button>
         </div>
       </div>
+    </aside>
+  </main>
 
-      <div class="admin-section" id="asec-posts">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <p style="color:var(--text2);font-size:.87rem;">Manage all published posts here changed</p>
-          <button class="btn btn-primary" onclick="openCreatePost()">+ New Post</button>
-        </div>
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
-          <table class="data-table"><thead><tr><th>#</th><th>Title</th><th>Category</th><th>Author</th><th>Date</th><th>Views</th><th>Trending</th><th>Actions</th></tr></thead><tbody id="adminPostsTbody"></tbody></table>
-        </div>
-      </div>
-
-      <div class="admin-section" id="asec-users">
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
-          <table class="data-table"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Posts</th><th>Actions</th></tr></thead><tbody id="adminUsersTbody"></tbody></table>
-        </div>
-      </div>
-
-      <div class="admin-section" id="asec-contacts">
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
-          <table class="data-table"><thead><tr><th>#</th><th>Name</th><th>Email</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead><tbody id="adminContactsTbody"></tbody></table>
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="logo-text">News<span>Hub</span></div>
+        <p>Your trusted source for breaking news, in-depth analysis, and insightful blogs. Covering stories that matter
+          most.</p>
+        <div class="footer-social">
+          <div class="social-btn">𝕏</div>
+          <div class="social-btn">f</div>
+          <div class="social-btn">📷</div>
+          <div class="social-btn">▶</div>
+          <div class="social-btn">in</div>
         </div>
       </div>
-
-      <div class="admin-section" id="asec-settings">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-          <div class="sidebar-widget" style="background:var(--card);">
-            <div class="sidebar-title">🎨 Site Branding</div>
-            <div class="form-group"><label>Site Name</label><input type="text" id="sSiteName" placeholder="NewsHub"></div>
-            <div class="form-group"><label>Logo Image URL</label><input type="url" id="sLogoUrl" placeholder="https://..."></div>
-            <button class="btn btn-primary btn-sm" onclick="saveBranding()">Save Branding</button>
-          </div>
-          <div class="sidebar-widget" style="background:var(--card);">
-            <div class="sidebar-title">📌 Sidebar Widget</div>
-            <div class="form-group"><label>Widget Type</label>
-              <select id="sWidgetType" onchange="toggleWidgetFields()"><option value="contact">Contact Form</option><option value="banner">Banner Image</option></select>
-            </div>
-            <div id="bannerFields" style="display:none;">
-              <div class="form-group"><label>Banner Image URL</label><input type="url" id="sBannerUrl" placeholder="https://..."></div>
-              <div class="form-group"><label>Banner Link URL</label><input type="url" id="sBannerLink" placeholder="https://..."></div>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="saveWidgetSettings()">Save Widget</button>
-          </div>
-          <div class="sidebar-widget" style="background:var(--card);">
-            <div class="sidebar-title">📰 Breaking Ticker</div>
-            <div class="form-group"><label>Items (one per line)</label><textarea id="sTickerItems" rows="5" placeholder="Breaking news 1&#10;Breaking news 2"></textarea></div>
-            <button class="btn btn-primary btn-sm" onclick="saveTicker()">Update Ticker</button>
-          </div>
-          <div class="sidebar-widget" style="background:var(--card);">
-            <div class="sidebar-title">🔑 Change Admin Password</div>
-            <div class="form-group"><label>New Password</label><input type="password" id="sNewPass" placeholder="Min 6 characters"></div>
-            <div class="form-group"><label>Confirm Password</label><input type="password" id="sConfPass" placeholder="Repeat password"></div>
-            <button class="btn btn-primary btn-sm" onclick="changeAdminPass()">Update Password</button>
-          </div>
-        </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Write for Us</a></li>
+          <li><a href="#">Advertise</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
       </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="#">Technology</a></li>
+          <li><a href="#">Politics</a></li>
+          <li><a href="#">Business</a></li>
+          <li><a href="#">Science</a></li>
+          <li><a href="#">Health</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Disclaimer</a></li>
+          <li><a href="#">DMCA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 NewsHub. All rights reserved. Crafted with ❤️ for the world.</p>
+      <p>Powered by NewsHub CMS v2.0</p>
+    </div>
+  </footer>
 
+  <!-- POST DETAIL -->
+  <div class="post-detail" id="postDetail">
+    <div class="post-detail-inner">
+      <div style="margin-bottom:24px;"><button class="btn btn-ghost" onclick="closePostDetail()">← Back to Home</button>
+      </div>
+      <img id="pdImg" src="" class="post-detail-img" alt="">
+      <div style="margin-bottom:12px;" id="pdCat"></div>
+      <h1 id="pdTitle"></h1>
+      <div class="post-detail-meta" id="pdMeta"></div>
+      <div class="post-detail-content" id="pdContent"></div>
     </div>
   </div>
-</div>
 
-<div class="notif" id="notif"></div>
+  <!-- LOGIN -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Sign In to NewsHub</h2><button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-error" id="loginError"></div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail"
+            placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="loginPass"
+            placeholder="Enter password"></div>
+        <p style="font-size:.8rem;color:var(--text3);margin-top:8px;">Admin: admin@newshub.com / admin123</p>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('loginModal')">Cancel</button><button
+          class="btn btn-primary" onclick="doLogin()">Sign In</button></div>
+    </div>
+  </div>
 
-<script>
-let db={
-  posts:[],users:[],contacts:[],
-  settings:{siteName:'NewsHub',logoUrl:'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=80&h=80&fit=crop',widgetType:'contact',bannerUrl:'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&h=300&fit=crop',bannerLink:'#',tickerItems:[]},
-  currentUser:null
-};
+  <!-- REGISTER -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create Account</h2><button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-error" id="regError"></div>
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" id="regFname" placeholder="John"></div>
+          <div class="form-group"><label>Last Name</label><input type="text" id="regLname" placeholder="Doe"></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="regEmail"
+            placeholder="you@example.com"></div>
+        <div class="form-group"><label>Password</label><input type="password" id="regPass"
+            placeholder="Min 6 characters"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost"
+          onclick="closeModal('registerModal')">Cancel</button><button class="btn btn-primary"
+          onclick="doRegister()">Create Account</button></div>
+    </div>
+  </div>
 
-function seedData(){
-  const imgs=['https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=500&fit=crop','https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=500&fit=crop'];
-  db.posts=[
-    {id:1,title:"AI Surpasses Human Reasoning: The Dawn of Artificial General Intelligence",category:"Technology",excerpt:"Scientists at leading AI labs have announced a breakthrough that challenges everything we knew about machine intelligence.",content:`<h2>A Defining Moment in History</h2><p>For decades, researchers dreamed of the moment artificial intelligence would match — and then exceed — human cognitive abilities. That moment, according to a landmark study published this week, may have arrived.</p><p>The new model demonstrated <strong>unprecedented performance</strong> across 47 standardized benchmarks designed to test complex reasoning, creativity, and problem-solving.</p><h2>What This Means for Society</h2><p>The implications are staggering. From accelerating medical research to transforming education, the ripple effects of this development are expected to reshape entire industries within the next decade.</p><p>Critics, however, urge caution. "We must ensure these systems align with human values," warned Dr. Sarah Chen, a leading AI ethics researcher.</p>`,image:imgs[0],author:"Editorial Team",authorId:0,date:"Apr 9, 2026",tags:"AI, Technology, Future",trending:true,views:24500},
-    {id:2,title:"Global Climate Summit Reaches Historic Carbon Deal After Marathon Talks",category:"World",excerpt:"195 nations agreed to binding emissions targets in what experts call the most significant climate accord in history.",content:`<h2>A Breakthrough After Decades</h2><p>After 72 hours of intense negotiations, world leaders emerged with a landmark agreement committing all 195 signatory nations to <strong>net-zero carbon emissions by 2045</strong> — five years ahead of previous targets.</p><p>The deal includes a $2 trillion global fund to help developing nations transition to clean energy, with binding enforcement mechanisms that critics of previous accords long demanded.</p><h2>Reactions from Around the World</h2><p>Environmental groups hailed the deal as a "turning point for humanity." Markets responded positively, with clean energy stocks surging across global exchanges.</p>`,image:imgs[1],author:"World Desk",authorId:0,date:"Apr 8, 2026",tags:"Climate, World, Politics",trending:true,views:18900},
-    {id:3,title:"India's Chandrayaan-5 Discovers Liquid Water Beneath Lunar Surface",category:"Science",excerpt:"ISRO scientists confirm the most significant lunar discovery in 50 years, opening new possibilities for human habitation.",content:`<h2>The Discovery That Changes Everything</h2><p>India's space agency, ISRO, confirmed Tuesday that its Chandrayaan-5 mission has detected substantial deposits of liquid water beneath the Moon's south pole — a finding that could revolutionize plans for long-term human lunar colonies.</p><p>The discovery identified reservoirs estimated to contain millions of cubic meters of water, far exceeding previous estimates.</p>`,image:imgs[2],author:"Science Bureau",authorId:0,date:"Apr 7, 2026",tags:"Space, Science, ISRO",trending:true,views:31200},
-    {id:4,title:"Tech Giants Face New Global Data Privacy Regulations Starting 2027",category:"Technology",excerpt:"A sweeping new international framework will require companies to fundamentally rethink how they handle user data.",content:`<h2>The New Privacy Landscape</h2><p>The International Data Governance Council ratified landmark regulations that will fundamentally alter how the world's largest technology companies collect, process, and store user data.</p><p>The framework introduces concepts like <strong>data minimization mandates</strong>, algorithmic transparency requirements, and the right to explanation for automated decisions.</p>`,image:imgs[3],author:"Tech Desk",authorId:0,date:"Apr 6, 2026",tags:"Privacy, Tech, Regulation",trending:false,views:9800},
-    {id:5,title:"Champions League Final: Real Madrid Stuns Manchester City in Penalty Shootout",category:"Sports",excerpt:"In one of the most dramatic finals in history, Real Madrid claimed their 16th Champions League title.",content:`<h2>An Unforgettable Night in Istanbul</h2><p>Real Madrid goalkeeper Thibaut Courtois saved three penalties in a dramatic shootout to hand his club their 16th Champions League title, breaking Manchester City fans' hearts in one of the tournament's most breathtaking finals.</p><p>The match finished 2-2 after extra time, with both sides producing moments of individual brilliance that kept 75,000 fans on their feet.</p>`,image:imgs[4],author:"Sports Desk",authorId:0,date:"Apr 5, 2026",tags:"Football, Champions League",trending:false,views:45300},
-    {id:6,title:"Remote Work Revolution: Companies Offer 4-Day Work Weeks Globally",category:"Business",excerpt:"A new study shows 73% of Fortune 500 companies now offer some form of four-day work week arrangement.",content:`<h2>The New Normal of Work</h2><p>The pandemic-era experiment with flexible work arrangements has crystallized into a fundamental shift in how corporations worldwide think about productivity and employee wellbeing.</p><p>Companies offering four-day work weeks reported <strong>28% higher employee satisfaction</strong> and a 12% increase in output compared to traditional five-day arrangements.</p>`,image:imgs[5],author:"Business Desk",authorId:0,date:"Apr 4, 2026",tags:"Business, Work, Productivity",trending:false,views:12400},
-    {id:7,title:"New Cancer Vaccine Shows 94% Effectiveness in Phase 3 Trials",category:"Health",excerpt:"mRNA technology that powered COVID-19 vaccines now targets multiple cancer types with remarkable early results.",content:`<h2>A Medical Milestone</h2><p>Building on mRNA vaccine technology pioneered during the COVID-19 pandemic, researchers have achieved what many oncologists are calling the most significant advance in cancer treatment in a generation.</p><p>The personalized cancer vaccine targets up to 34 different tumor types and demonstrated <strong>94.3% effectiveness</strong> in preventing cancer recurrence among trial participants.</p>`,image:imgs[6],author:"Health Desk",authorId:0,date:"Apr 3, 2026",tags:"Health, Medicine, Cancer",trending:false,views:28700},
-    {id:8,title:"Bollywood Blockbuster Breaks All-Time Opening Day Box Office Records",category:"Entertainment",excerpt:"The action epic shattered box office records across India and internationally, signaling a massive comeback for cinema.",content:`<h2>A Record-Breaking Opening</h2><p>The latest Bollywood blockbuster collected ₹210 crore on its opening day alone, smashing the previous record and signaling a triumphant return of large-scale Indian cinema to global screens.</p><p>The film combines breathtaking visual effects with a deeply emotional narrative that critics say elevates it beyond typical action fare.</p>`,image:imgs[7],author:"Entertainment Desk",authorId:0,date:"Apr 2, 2026",tags:"Bollywood, Film, Entertainment",trending:false,views:19600},
-    {id:9,title:"Electric Vehicle Sales Surpass Combustion Engines for First Time in History",category:"Business",excerpt:"March 2026 marked a watershed moment as EV sales globally exceeded those of traditional petrol and diesel vehicles.",content:`<h2>The Tipping Point Arrives</h2><p>March 2026 will be remembered as the month that transformed the global automotive industry forever. For the first time in history, battery-electric vehicles outsold internal combustion engine cars worldwide.</p><p>The shift was driven by dramatic price parity between EVs and traditional vehicles, improved battery range, and an expanding global charging infrastructure.</p>`,image:imgs[8],author:"Business Desk",authorId:0,date:"Apr 1, 2026",tags:"EV, Business, Automotive",trending:false,views:14300},
-  ];
-  db.users=[
-    {id:0,fname:"Admin",lname:"User",email:"admin@newshub.com",password:"admin123",role:"admin",joined:"Jan 1, 2026"},
-    {id:1,fname:"Rahul",lname:"Sharma",email:"rahul@example.com",password:"pass123",role:"author",joined:"Feb 15, 2026"},
-    {id:2,fname:"Priya",lname:"Mehta",email:"priya@example.com",password:"pass123",role:"author",joined:"Mar 3, 2026"},
-  ];
-  db.contacts=[
-    {id:1,name:"Amit Kumar",email:"amit@example.com",message:"Great website! Love the coverage of tech news.",date:"Apr 8, 2026"},
-    {id:2,name:"Sneha Patel",email:"sneha@example.com",message:"Could you cover more stories about renewable energy?",date:"Apr 7, 2026"},
-  ];
-}
+  <!-- CREATE POST -->
+  <div class="modal-overlay" id="createPostModal">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="createPostTitle">✍️ Write New Post</h2><button class="modal-close"
+          onclick="closeModal('createPostModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Post Title *</label><input type="text" id="postTitle"
+              placeholder="Enter compelling headline…"></div>
+          <div class="form-group"><label>Category *</label>
+            <select id="postCategory">
+              <option value="">Select category</option>
+              <option>Technology</option>
+              <option>Politics</option>
+              <option>Science</option>
+              <option>Business</option>
+              <option>Health</option>
+              <option>Sports</option>
+              <option>Entertainment</option>
+              <option>World</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label>Cover Image URL</label><input type="url" id="postImage"
+            placeholder="https://... (leave blank for default)"></div>
+        <div class="form-group"><label>Excerpt (short description)</label><input type="text" id="postExcerpt"
+            placeholder="Brief summary shown on cards…"></div>
+        <div class="form-group">
+          <label>Content *</label>
+          <div class="editor-toolbar">
+            <button onclick="fmt('bold')"><b>B</b></button>
+            <button onclick="fmt('italic')"><i>I</i></button>
+            <button onclick="fmt('underline')"><u>U</u></button>
+            <button onclick="fmtBlock('h2')">H2</button>
+            <button onclick="fmtBlock('h3')">H3</button>
+            <button onclick="fmtBlock('p')">¶ P</button>
+            <button onclick="fmt('insertUnorderedList')">• List</button>
+            <button onclick="fmt('insertOrderedList')">1. List</button>
+            <button onclick="fmt('strikeThrough')"><s>S</s></button>
+          </div>
+          <div class="editor-content" id="postContent" contenteditable="true"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Tags (comma-separated)</label><input type="text" id="postTags"
+              placeholder="AI, technology, future"></div>
+          <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:24px;">
+            <input type="checkbox" id="postTrending" style="width:auto;accent-color:var(--accent);">
+            <label for="postTrending" style="margin:0;cursor:pointer;">🔥 Mark as Trending</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost"
+          onclick="closeModal('createPostModal')">Cancel</button><button class="btn btn-primary"
+          onclick="savePost()">Publish Post</button></div>
+    </div>
+  </div>
 
-function doLogin(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  showAlert('loginError','');
-  const user=db.users.find(u=>u.email===email&&u.password===pass);
-  if(!user){showAlert('loginError','Invalid email or password.');return;}
-  db.currentUser=user;
-  closeModal('loginModal');
-  updateHeaderForUser();
-  showNotif('👋 Welcome back, '+user.fname+'!');
-}
+  <!-- ADMIN PANEL -->
+  <div class="admin-overlay" id="adminPanel">
+    <div class="admin-sidebar-nav">
+      <div class="admin-logo">
+        <div class="logo-text">News<span>Hub</span></div>
+        <small style="font-size:.75rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">Admin
+          Panel</small>
+      </div>
+      <nav class="admin-nav">
+        <a onclick="adminTab('dashboard')" class="active" id="atab-dashboard"><span>📊</span> Dashboard</a>
+        <a onclick="adminTab('posts')" id="atab-posts"><span>📝</span> All Posts</a>
+        <a onclick="adminTab('users')" id="atab-users"><span>👥</span> Users</a>
+        <a onclick="adminTab('contacts')" id="atab-contacts"><span>📬</span> Messages</a>
+        <a onclick="adminTab('settings')" id="atab-settings"><span>⚙️</span> Settings</a>
+      </nav>
+    </div>
+    <div class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="adminTabTitle">📊 Dashboard</h1>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span style="font-size:.85rem;color:var(--text2);">Logged in as <strong
+              style="color:var(--accent);">Admin</strong></span>
+          <button class="btn btn-ghost btn-sm" onclick="closeAdmin()">← Back to Site</button>
+        </div>
+      </div>
+      <div class="admin-content">
 
-function doRegister(){
-  const fname=document.getElementById('regFname').value.trim();
-  const lname=document.getElementById('regLname').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const pass=document.getElementById('regPass').value;
-  showAlert('regError','');
-  if(!fname||!lname||!email||!pass){showAlert('regError','All fields required.');return;}
-  if(pass.length<6){showAlert('regError','Password must be at least 6 characters.');return;}
-  if(db.users.find(u=>u.email===email)){showAlert('regError','Email already registered.');return;}
-  const nu={id:Date.now(),fname,lname,email,password:pass,role:'author',joined:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
-  db.users.push(nu);db.currentUser=nu;
-  closeModal('registerModal');updateHeaderForUser();
-  showNotif('🎉 Welcome, '+fname+'! Account created.');
-}
+        <div class="admin-section active" id="asec-dashboard">
+          <div class="stats-row" id="statsRow"></div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;">
+            <div class="sidebar-title" style="border:none;padding:0;margin-bottom:16px;">📋 Recent Posts</div>
+            <div id="recentActivity"></div>
+          </div>
+        </div>
 
-function doLogout(){
-  db.currentUser=null;
-  document.getElementById('headerActions').innerHTML='<button class="btn btn-ghost" onclick="openModal(\'loginModal\')">Sign In</button><button class="btn btn-primary" onclick="openModal(\'registerModal\')">Register</button>';
-  showNotif('👋 Signed out successfully');
-}
+        <div class="admin-section" id="asec-posts">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <p style="color:var(--text2);font-size:.87rem;">Manage all published posts here changed</p>
+            <button class="btn btn-primary" onclick="openCreatePost()">+ New Post</button>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Author</th>
+                  <th>Date</th>
+                  <th>Views</th>
+                  <th>Trending</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminPostsTbody"></tbody>
+            </table>
+          </div>
+        </div>
 
-function updateHeaderForUser(){
-  const u=db.currentUser;
-  let a=`<button class="btn btn-primary btn-sm" onclick="openCreatePost()">✍️ Write</button>`;
-  if(u.role==='admin') a+=` <button class="btn btn-ghost btn-sm" onclick="openAdmin()">⚙️ Admin</button>`;
-  a+=` <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);padding:6px 12px;border-radius:24px;border:1px solid var(--border);"><span style="font-size:.85rem;color:var(--text2);">${u.fname} ${u.lname}</span><button class="btn btn-ghost btn-sm" style="padding:3px 8px;" onclick="doLogout()">×</button></div>`;
-  document.getElementById('headerActions').innerHTML=a;
-}
+        <div class="admin-section" id="asec-users">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Joined</th>
+                  <th>Posts</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTbody"></tbody>
+            </table>
+          </div>
+        </div>
 
-let currentEditId=null,currentCatFilter='all';
+        <div class="admin-section" id="asec-contacts">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Message</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminContactsTbody"></tbody>
+            </table>
+          </div>
+        </div>
 
-function openCreatePost(postId=null){
-  currentEditId=postId;
-  if(postId){
-    const p=db.posts.find(x=>x.id===postId);
-    document.getElementById('createPostTitle').textContent='✏️ Edit Post';
-    document.getElementById('postTitle').value=p.title;
-    document.getElementById('postCategory').value=p.category;
-    document.getElementById('postImage').value=p.image||'';
-    document.getElementById('postExcerpt').value=p.excerpt||'';
-    document.getElementById('postContent').innerHTML=p.content||'';
-    document.getElementById('postTags').value=p.tags||'';
-    document.getElementById('postTrending').checked=p.trending||false;
-  } else {
-    document.getElementById('createPostTitle').textContent='✍️ Write New Post';
-    ['postTitle','postImage','postExcerpt','postTags'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('postCategory').value='';
-    document.getElementById('postContent').innerHTML='';
-    document.getElementById('postTrending').checked=false;
-  }
-  openModal('createPostModal');
-}
+        <div class="admin-section" id="asec-settings">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+            <div class="sidebar-widget" style="background:var(--card);">
+              <div class="sidebar-title">🎨 Site Branding</div>
+              <div class="form-group"><label>Site Name</label><input type="text" id="sSiteName" placeholder="NewsHub">
+              </div>
+              <div class="form-group"><label>Logo Image URL</label><input type="url" id="sLogoUrl"
+                  placeholder="https://..."></div>
+              <button class="btn btn-primary btn-sm" onclick="saveBranding()">Save Branding</button>
+            </div>
+            <div class="sidebar-widget" style="background:var(--card);">
+              <div class="sidebar-title">📌 Sidebar Widget</div>
+              <div class="form-group"><label>Widget Type</label>
+                <select id="sWidgetType" onchange="toggleWidgetFields()">
+                  <option value="contact">Contact Form</option>
+                  <option value="banner">Banner Image</option>
+                </select>
+              </div>
+              <div id="bannerFields" style="display:none;">
+                <div class="form-group"><label>Banner Image URL</label><input type="url" id="sBannerUrl"
+                    placeholder="https://..."></div>
+                <div class="form-group"><label>Banner Link URL</label><input type="url" id="sBannerLink"
+                    placeholder="https://..."></div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="saveWidgetSettings()">Save Widget</button>
+            </div>
+            <div class="sidebar-widget" style="background:var(--card);">
+              <div class="sidebar-title">📰 Breaking Ticker</div>
+              <div class="form-group"><label>Items (one per line)</label><textarea id="sTickerItems" rows="5"
+                  placeholder="Breaking news 1&#10;Breaking news 2"></textarea></div>
+              <button class="btn btn-primary btn-sm" onclick="saveTicker()">Update Ticker</button>
+            </div>
+            <div class="sidebar-widget" style="background:var(--card);">
+              <div class="sidebar-title">🔑 Change Admin Password</div>
+              <div class="form-group"><label>New Password</label><input type="password" id="sNewPass"
+                  placeholder="Min 6 characters"></div>
+              <div class="form-group"><label>Confirm Password</label><input type="password" id="sConfPass"
+                  placeholder="Repeat password"></div>
+              <button class="btn btn-primary btn-sm" onclick="changeAdminPass()">Update Password</button>
+            </div>
+          </div>
+        </div>
 
-function savePost(){
-  const title=document.getElementById('postTitle').value.trim();
-  const category=document.getElementById('postCategory').value;
-  if(!title||!category){showNotif('❌ Title and category required');return;}
-  const image=document.getElementById('postImage').value.trim()||'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=500&fit=crop';
-  const excerpt=document.getElementById('postExcerpt').value.trim();
-  const content=document.getElementById('postContent').innerHTML;
-  const tags=document.getElementById('postTags').value.trim();
-  const trending=document.getElementById('postTrending').checked;
-  const user=db.currentUser;
-  if(currentEditId){
-    const idx=db.posts.findIndex(x=>x.id===currentEditId);
-    db.posts[idx]={...db.posts[idx],title,category,image,excerpt,content,tags,trending};
-  } else {
-    db.posts.unshift({id:Date.now(),title,category,excerpt,content,image,author:user.fname+' '+user.lname,authorId:user.id,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),tags,trending,views:0});
-  }
-  closeModal('createPostModal');renderAll();showNotif('✅ Post published!');
-}
+      </div>
+    </div>
+  </div>
 
-function deletePost(id){
-  if(!confirm('Delete this post?'))return;
-  db.posts=db.posts.filter(p=>p.id!==id);renderAll();showNotif('🗑️ Post deleted');
-}
+  <div class="notif" id="notif"></div>
 
-function filterCat(cat,el){
-  currentCatFilter=cat;
-  document.querySelectorAll('.nav-bar a').forEach(a=>a.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.getElementById('latestTitle').textContent=cat==='all'?'📰 Latest Stories':'📰 '+cat+' Stories';
-  renderPosts();
-}
+  <script>
+    let db = {
+      posts: [], users: [], contacts: [],
+      settings: { siteName: 'NewsHub', logoUrl: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=80&h=80&fit=crop', widgetType: 'contact', bannerUrl: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=600&h=300&fit=crop', bannerLink: '#', tickerItems: [] },
+      currentUser: null
+    };
 
-function renderAll(){renderTrending();renderPosts();renderPopular();renderCatPills();renderSidebar();renderAdminPosts();renderAdminUsers();renderAdminContacts();renderStats();renderRecentActivity();}
+    function seedData() {
+      const imgs = ['https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=800&h=500&fit=crop', 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=500&fit=crop'];
+      db.posts = [
+        { id: 1, title: "AI Surpasses Human Reasoning: The Dawn of Artificial General Intelligence", category: "Technology", excerpt: "Scientists at leading AI labs have announced a breakthrough that challenges everything we knew about machine intelligence.", content: `<h2>A Defining Moment in History</h2><p>For decades, researchers dreamed of the moment artificial intelligence would match — and then exceed — human cognitive abilities. That moment, according to a landmark study published this week, may have arrived.</p><p>The new model demonstrated <strong>unprecedented performance</strong> across 47 standardized benchmarks designed to test complex reasoning, creativity, and problem-solving.</p><h2>What This Means for Society</h2><p>The implications are staggering. From accelerating medical research to transforming education, the ripple effects of this development are expected to reshape entire industries within the next decade.</p><p>Critics, however, urge caution. "We must ensure these systems align with human values," warned Dr. Sarah Chen, a leading AI ethics researcher.</p>`, image: imgs[0], author: "Editorial Team", authorId: 0, date: "Apr 9, 2026", tags: "AI, Technology, Future", trending: true, views: 24500 },
+        { id: 2, title: "Global Climate Summit Reaches Historic Carbon Deal After Marathon Talks", category: "World", excerpt: "195 nations agreed to binding emissions targets in what experts call the most significant climate accord in history.", content: `<h2>A Breakthrough After Decades</h2><p>After 72 hours of intense negotiations, world leaders emerged with a landmark agreement committing all 195 signatory nations to <strong>net-zero carbon emissions by 2045</strong> — five years ahead of previous targets.</p><p>The deal includes a $2 trillion global fund to help developing nations transition to clean energy, with binding enforcement mechanisms that critics of previous accords long demanded.</p><h2>Reactions from Around the World</h2><p>Environmental groups hailed the deal as a "turning point for humanity." Markets responded positively, with clean energy stocks surging across global exchanges.</p>`, image: imgs[1], author: "World Desk", authorId: 0, date: "Apr 8, 2026", tags: "Climate, World, Politics", trending: true, views: 18900 },
+        { id: 3, title: "India's Chandrayaan-5 Discovers Liquid Water Beneath Lunar Surface", category: "Science", excerpt: "ISRO scientists confirm the most significant lunar discovery in 50 years, opening new possibilities for human habitation.", content: `<h2>The Discovery That Changes Everything</h2><p>India's space agency, ISRO, confirmed Tuesday that its Chandrayaan-5 mission has detected substantial deposits of liquid water beneath the Moon's south pole — a finding that could revolutionize plans for long-term human lunar colonies.</p><p>The discovery identified reservoirs estimated to contain millions of cubic meters of water, far exceeding previous estimates.</p>`, image: imgs[2], author: "Science Bureau", authorId: 0, date: "Apr 7, 2026", tags: "Space, Science, ISRO", trending: true, views: 31200 },
+        { id: 4, title: "Tech Giants Face New Global Data Privacy Regulations Starting 2027", category: "Technology", excerpt: "A sweeping new international framework will require companies to fundamentally rethink how they handle user data.", content: `<h2>The New Privacy Landscape</h2><p>The International Data Governance Council ratified landmark regulations that will fundamentally alter how the world's largest technology companies collect, process, and store user data.</p><p>The framework introduces concepts like <strong>data minimization mandates</strong>, algorithmic transparency requirements, and the right to explanation for automated decisions.</p>`, image: imgs[3], author: "Tech Desk", authorId: 0, date: "Apr 6, 2026", tags: "Privacy, Tech, Regulation", trending: false, views: 9800 },
+        { id: 5, title: "Champions League Final: Real Madrid Stuns Manchester City in Penalty Shootout", category: "Sports", excerpt: "In one of the most dramatic finals in history, Real Madrid claimed their 16th Champions League title.", content: `<h2>An Unforgettable Night in Istanbul</h2><p>Real Madrid goalkeeper Thibaut Courtois saved three penalties in a dramatic shootout to hand his club their 16th Champions League title, breaking Manchester City fans' hearts in one of the tournament's most breathtaking finals.</p><p>The match finished 2-2 after extra time, with both sides producing moments of individual brilliance that kept 75,000 fans on their feet.</p>`, image: imgs[4], author: "Sports Desk", authorId: 0, date: "Apr 5, 2026", tags: "Football, Champions League", trending: false, views: 45300 },
+        { id: 6, title: "Remote Work Revolution: Companies Offer 4-Day Work Weeks Globally", category: "Business", excerpt: "A new study shows 73% of Fortune 500 companies now offer some form of four-day work week arrangement.", content: `<h2>The New Normal of Work</h2><p>The pandemic-era experiment with flexible work arrangements has crystallized into a fundamental shift in how corporations worldwide think about productivity and employee wellbeing.</p><p>Companies offering four-day work weeks reported <strong>28% higher employee satisfaction</strong> and a 12% increase in output compared to traditional five-day arrangements.</p>`, image: imgs[5], author: "Business Desk", authorId: 0, date: "Apr 4, 2026", tags: "Business, Work, Productivity", trending: false, views: 12400 },
+        { id: 7, title: "New Cancer Vaccine Shows 94% Effectiveness in Phase 3 Trials", category: "Health", excerpt: "mRNA technology that powered COVID-19 vaccines now targets multiple cancer types with remarkable early results.", content: `<h2>A Medical Milestone</h2><p>Building on mRNA vaccine technology pioneered during the COVID-19 pandemic, researchers have achieved what many oncologists are calling the most significant advance in cancer treatment in a generation.</p><p>The personalized cancer vaccine targets up to 34 different tumor types and demonstrated <strong>94.3% effectiveness</strong> in preventing cancer recurrence among trial participants.</p>`, image: imgs[6], author: "Health Desk", authorId: 0, date: "Apr 3, 2026", tags: "Health, Medicine, Cancer", trending: false, views: 28700 },
+        { id: 8, title: "Bollywood Blockbuster Breaks All-Time Opening Day Box Office Records", category: "Entertainment", excerpt: "The action epic shattered box office records across India and internationally, signaling a massive comeback for cinema.", content: `<h2>A Record-Breaking Opening</h2><p>The latest Bollywood blockbuster collected ₹210 crore on its opening day alone, smashing the previous record and signaling a triumphant return of large-scale Indian cinema to global screens.</p><p>The film combines breathtaking visual effects with a deeply emotional narrative that critics say elevates it beyond typical action fare.</p>`, image: imgs[7], author: "Entertainment Desk", authorId: 0, date: "Apr 2, 2026", tags: "Bollywood, Film, Entertainment", trending: false, views: 19600 },
+        { id: 9, title: "Electric Vehicle Sales Surpass Combustion Engines for First Time in History", category: "Business", excerpt: "March 2026 marked a watershed moment as EV sales globally exceeded those of traditional petrol and diesel vehicles.", content: `<h2>The Tipping Point Arrives</h2><p>March 2026 will be remembered as the month that transformed the global automotive industry forever. For the first time in history, battery-electric vehicles outsold internal combustion engine cars worldwide.</p><p>The shift was driven by dramatic price parity between EVs and traditional vehicles, improved battery range, and an expanding global charging infrastructure.</p>`, image: imgs[8], author: "Business Desk", authorId: 0, date: "Apr 1, 2026", tags: "EV, Business, Automotive", trending: false, views: 14300 },
+      ];
+      db.users = [
+        { id: 0, fname: "Admin", lname: "User", email: "admin@newshub.com", password: "admin123", role: "admin", joined: "Jan 1, 2026" },
+        { id: 1, fname: "Rahul", lname: "Sharma", email: "rahul@example.com", password: "pass123", role: "author", joined: "Feb 15, 2026" },
+        { id: 2, fname: "Priya", lname: "Mehta", email: "priya@example.com", password: "pass123", role: "author", joined: "Mar 3, 2026" },
+      ];
+      db.contacts = [
+        { id: 1, name: "Amit Kumar", email: "amit@example.com", message: "Great website! Love the coverage of tech news.", date: "Apr 8, 2026" },
+        { id: 2, name: "Sneha Patel", email: "sneha@example.com", message: "Could you cover more stories about renewable energy?", date: "Apr 7, 2026" },
+      ];
+    }
 
-function renderTrending(){
-  const t=db.posts.filter(p=>p.trending).slice(0,3);
-  if(!t.length){document.getElementById('trendingGrid').style.display='none';return;}
-  document.getElementById('trendingGrid').style.display='';
-  const main=t[0],secs=t.slice(1,3);
-  let h=`<div class="trending-main" onclick="openPost(${main.id})" style="cursor:pointer;"><img src="${main.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=380&fit=crop'"><div class="post-overlay"><div class="cat-tag">${main.category}</div><div class="post-title">${main.title}</div><div class="post-meta">By ${main.author} · ${main.date}</div></div></div>`;
-  secs.forEach(p=>{h+=`<div class="trending-secondary" onclick="openPost(${p.id})" style="cursor:pointer;"><img src="${p.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=190&fit=crop'"><div class="post-card-info"><div class="cat-tag">${p.category}</div><div class="post-title">${p.title}</div><div class="post-meta">By ${p.author} · ${p.date}</div></div></div>`;});
-  document.getElementById('trendingGrid').innerHTML=h;
-}
+    function doLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPass').value;
+      showAlert('loginError', '');
+      const user = db.users.find(u => u.email === email && u.password === pass);
+      if (!user) { showAlert('loginError', 'Invalid email or password.'); return; }
+      db.currentUser = user;
+      closeModal('loginModal');
+      updateHeaderForUser();
+      showNotif('👋 Welcome back, ' + user.fname + '!');
+    }
 
-function renderPosts(){
-  let posts=currentCatFilter==='all'?db.posts:db.posts.filter(p=>p.category===currentCatFilter);
-  if(!posts.length){document.getElementById('postsGrid').innerHTML='<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text2);">No posts in this category yet.</div>';return;}
-  document.getElementById('postsGrid').innerHTML=posts.map(p=>`<div class="post-card" onclick="openPost(${p.id})"><img src="${p.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=160&fit=crop'"><div class="post-card-body"><div class="cat-tag">${p.category}</div><div class="post-title">${p.title}</div><div class="post-excerpt">${p.excerpt||''}</div><div class="post-meta"><span class="author">${p.author}</span><span>·</span><span>${p.date}</span><span>·</span><span>👁 ${(p.views||0).toLocaleString()}</span></div></div></div>`).join('');
-}
+    function doRegister() {
+      const fname = document.getElementById('regFname').value.trim();
+      const lname = document.getElementById('regLname').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const pass = document.getElementById('regPass').value;
+      showAlert('regError', '');
+      if (!fname || !lname || !email || !pass) { showAlert('regError', 'All fields required.'); return; }
+      if (pass.length < 6) { showAlert('regError', 'Password must be at least 6 characters.'); return; }
+      if (db.users.find(u => u.email === email)) { showAlert('regError', 'Email already registered.'); return; }
+      const nu = { id: Date.now(), fname, lname, email, password: pass, role: 'author', joined: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) };
+      db.users.push(nu); db.currentUser = nu;
+      closeModal('registerModal'); updateHeaderForUser();
+      showNotif('🎉 Welcome, ' + fname + '! Account created.');
+    }
 
-function renderPopular(){
-  const s=[...db.posts].sort((a,b)=>(b.views||0)-(a.views||0)).slice(0,5);
-  document.getElementById('popularList').innerHTML=s.map((p,i)=>`<div class="popular-item"><div class="popular-num">0${i+1}</div><div><div class="popular-title" onclick="openPost(${p.id})">${p.title}</div><div class="popular-meta">${p.category} · ${p.date}</div></div></div>`).join('');
-}
+    function doLogout() {
+      db.currentUser = null;
+      document.getElementById('headerActions').innerHTML = '<button class="btn btn-ghost" onclick="openModal(\'loginModal\')">Sign In</button><button class="btn btn-primary" onclick="openModal(\'registerModal\')">Register</button>';
+      showNotif('👋 Signed out successfully');
+    }
 
-function renderCatPills(){
-  const cats=[...new Set(db.posts.map(p=>p.category))];
-  document.getElementById('catPills').innerHTML=cats.map(c=>`<div class="cat-pill" onclick="filterCat('${c}',null)">${c}</div>`).join('');
-}
+    function updateHeaderForUser() {
+      const u = db.currentUser;
+      let a = `<button class="btn btn-primary btn-sm" onclick="openCreatePost()">✍️ Write</button>`;
+      if (u.role === 'admin') a += ` <button class="btn btn-ghost btn-sm" onclick="openAdmin()">⚙️ Admin</button>`;
+      a += ` <div style="display:flex;align-items:center;gap:8px;background:var(--bg3);padding:6px 12px;border-radius:24px;border:1px solid var(--border);"><span style="font-size:.85rem;color:var(--text2);">${u.fname} ${u.lname}</span><button class="btn btn-ghost btn-sm" style="padding:3px 8px;" onclick="doLogout()">×</button></div>`;
+      document.getElementById('headerActions').innerHTML = a;
+    }
 
-function renderSidebar(){
-  const w=db.settings.widgetType,el=document.getElementById('sidebarWidget');
-  if(w==='banner'){
-    el.innerHTML=`<div class="sidebar-title">🎯 Sponsored</div><a href="${db.settings.bannerLink||'#'}" target="_blank"><img src="${db.settings.bannerUrl}" style="width:100%;height:200px;object-fit:cover;border-radius:var(--radius);" alt="Banner"></a>`;
-  } else {
-    el.innerHTML=`<div class="sidebar-title">📮 Contact Us</div><div class="contact-form"><label>Your Name</label><input type="text" id="cName" placeholder="John Doe"><label>Email</label><input type="email" id="cEmail" placeholder="you@example.com"><label>Message</label><textarea id="cMsg" placeholder="Your message…"></textarea><button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="submitContact()">Send Message</button></div>`;
-  }
-}
+    let currentEditId = null, currentCatFilter = 'all';
 
-function submitContact(){
-  const name=document.getElementById('cName')?.value||'';
-  const email=document.getElementById('cEmail')?.value||'';
-  const message=document.getElementById('cMsg')?.value||'';
-  if(!name||!email||!message){showNotif('❌ Please fill all fields');return;}
-  db.contacts.push({id:Date.now(),name,email,message,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})});
-  renderAdminContacts();showNotif("✅ Message sent! We'll get back to you.");
-  document.getElementById('cName').value='';document.getElementById('cEmail').value='';document.getElementById('cMsg').value='';
-}
+    function openCreatePost(postId = null) {
+      currentEditId = postId;
+      if (postId) {
+        const p = db.posts.find(x => x.id === postId);
+        document.getElementById('createPostTitle').textContent = '✏️ Edit Post';
+        document.getElementById('postTitle').value = p.title;
+        document.getElementById('postCategory').value = p.category;
+        document.getElementById('postImage').value = p.image || '';
+        document.getElementById('postExcerpt').value = p.excerpt || '';
+        document.getElementById('postContent').innerHTML = p.content || '';
+        document.getElementById('postTags').value = p.tags || '';
+        document.getElementById('postTrending').checked = p.trending || false;
+      } else {
+        document.getElementById('createPostTitle').textContent = '✍️ Write New Post';
+        ['postTitle', 'postImage', 'postExcerpt', 'postTags'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('postCategory').value = '';
+        document.getElementById('postContent').innerHTML = '';
+        document.getElementById('postTrending').checked = false;
+      }
+      openModal('createPostModal');
+    }
 
-function openPost(id){
-  const p=db.posts.find(x=>x.id===id);if(!p)return;
-  p.views=(p.views||0)+1;
-  document.getElementById('pdImg').src=p.image;
-  document.getElementById('pdCat').innerHTML=`<span class="cat-tag" style="font-size:.85rem;">${p.category}</span>`;
-  document.getElementById('pdTitle').textContent=p.title;
-  document.getElementById('pdMeta').innerHTML=`<span>By <strong>${p.author}</strong></span><span>·</span><span>${p.date}</span><span>·</span><span>👁 ${p.views.toLocaleString()} views</span><span>·</span><span>🏷 ${p.tags||''}</span>`;
-  document.getElementById('pdContent').innerHTML=p.content||`<p>${p.excerpt}</p>`;
-  document.getElementById('postDetail').classList.add('show');document.body.style.overflow='hidden';
-  renderPosts();renderPopular();
-}
+    function savePost() {
+      const title = document.getElementById('postTitle').value.trim();
+      const category = document.getElementById('postCategory').value;
+      if (!title || !category) { showNotif('❌ Title and category required'); return; }
+      const image = document.getElementById('postImage').value.trim() || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=500&fit=crop';
+      const excerpt = document.getElementById('postExcerpt').value.trim();
+      const content = document.getElementById('postContent').innerHTML;
+      const tags = document.getElementById('postTags').value.trim();
+      const trending = document.getElementById('postTrending').checked;
+      const user = db.currentUser;
+      if (currentEditId) {
+        const idx = db.posts.findIndex(x => x.id === currentEditId);
+        db.posts[idx] = { ...db.posts[idx], title, category, image, excerpt, content, tags, trending };
+      } else {
+        db.posts.unshift({ id: Date.now(), title, category, excerpt, content, image, author: user.fname + ' ' + user.lname, authorId: user.id, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), tags, trending, views: 0 });
+      }
+      closeModal('createPostModal'); renderAll(); showNotif('✅ Post published!');
+    }
 
-function closePostDetail(){document.getElementById('postDetail').classList.remove('show');document.body.style.overflow='';}
+    function deletePost(id) {
+      if (!confirm('Delete this post?')) return;
+      db.posts = db.posts.filter(p => p.id !== id); renderAll(); showNotif('🗑️ Post deleted');
+    }
 
-document.getElementById('searchInput').addEventListener('input',function(){
-  const q=this.value.trim().toLowerCase(),res=document.getElementById('searchResults');
-  if(!q){res.style.display='none';return;}
-  const m=db.posts.filter(p=>p.title.toLowerCase().includes(q)||p.category.toLowerCase().includes(q)||(p.tags&&p.tags.toLowerCase().includes(q))).slice(0,6);
-  if(!m.length){res.style.display='none';return;}
-  res.innerHTML=m.map(p=>`<div class="search-result-item" onclick="openPost(${p.id});document.getElementById('searchInput').value='';document.getElementById('searchResults').style.display='none';"><div class="sr-cat">${p.category}</div><div class="sr-title">${p.title}</div></div>`).join('');
-  res.style.display='block';
-});
-document.addEventListener('click',e=>{if(!e.target.closest('.search-bar'))document.getElementById('searchResults').style.display='none';});
+    function filterCat(cat, el) {
+      currentCatFilter = cat;
+      document.querySelectorAll('.nav-bar a').forEach(a => a.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('latestTitle').textContent = cat === 'all' ? '📰 Latest Stories' : '📰 ' + cat + ' Stories';
+      renderPosts();
+    }
 
-function fmt(cmd){document.getElementById('postContent').focus();document.execCommand(cmd,false,null);}
-function fmtBlock(tag){document.getElementById('postContent').focus();document.execCommand('formatBlock',false,tag);}
+    function renderAll() { renderTrending(); renderPosts(); renderPopular(); renderCatPills(); renderSidebar(); renderAdminPosts(); renderAdminUsers(); renderAdminContacts(); renderStats(); renderRecentActivity(); }
 
-function openAdmin(){
-  document.getElementById('adminPanel').classList.add('show');document.body.style.overflow='hidden';
-  renderAll();
-  document.getElementById('sSiteName').value=db.settings.siteName;
-  document.getElementById('sLogoUrl').value=db.settings.logoUrl;
-  document.getElementById('sWidgetType').value=db.settings.widgetType;
-  document.getElementById('sBannerUrl').value=db.settings.bannerUrl||'';
-  document.getElementById('sBannerLink').value=db.settings.bannerLink||'';
-  document.getElementById('sTickerItems').value=db.settings.tickerItems&&db.settings.tickerItems.length?db.settings.tickerItems.join('\n'):'';
-  toggleWidgetFields();
-}
+    function renderTrending() {
+      const t = db.posts.filter(p => p.trending).slice(0, 3);
+      if (!t.length) { document.getElementById('trendingGrid').style.display = 'none'; return; }
+      document.getElementById('trendingGrid').style.display = '';
+      const main = t[0], secs = t.slice(1, 3);
+      let h = `<div class="trending-main" onclick="openPost(${main.id})" style="cursor:pointer;"><img src="${main.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=380&fit=crop'"><div class="post-overlay"><div class="cat-tag">${main.category}</div><div class="post-title">${main.title}</div><div class="post-meta">By ${main.author} · ${main.date}</div></div></div>`;
+      secs.forEach(p => { h += `<div class="trending-secondary" onclick="openPost(${p.id})" style="cursor:pointer;"><img src="${p.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=190&fit=crop'"><div class="post-card-info"><div class="cat-tag">${p.category}</div><div class="post-title">${p.title}</div><div class="post-meta">By ${p.author} · ${p.date}</div></div></div>`; });
+      document.getElementById('trendingGrid').innerHTML = h;
+    }
 
-function closeAdmin(){document.getElementById('adminPanel').classList.remove('show');document.body.style.overflow='';}
+    function renderPosts() {
+      let posts = currentCatFilter === 'all' ? db.posts : db.posts.filter(p => p.category === currentCatFilter);
+      if (!posts.length) { document.getElementById('postsGrid').innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text2);">No posts in this category yet.</div>'; return; }
+      document.getElementById('postsGrid').innerHTML = posts.map(p => `<div class="post-card" onclick="openPost(${p.id})"><img src="${p.image}" class="post-img" alt="" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=160&fit=crop'"><div class="post-card-body"><div class="cat-tag">${p.category}</div><div class="post-title">${p.title}</div><div class="post-excerpt">${p.excerpt || ''}</div><div class="post-meta"><span class="author">${p.author}</span><span>·</span><span>${p.date}</span><span>·</span><span>👁 ${(p.views || 0).toLocaleString()}</span></div></div></div>`).join('');
+    }
 
-function adminTab(name){
-  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.admin-nav a').forEach(a=>a.classList.remove('active'));
-  document.getElementById('asec-'+name).classList.add('active');
-  document.getElementById('atab-'+name).classList.add('active');
-  const t={dashboard:'📊 Dashboard',posts:'📝 All Posts',users:'👥 Users',contacts:'📬 Contact Messages',settings:'⚙️ Settings'};
-  document.getElementById('adminTabTitle').textContent=t[name]||name;
-}
+    function renderPopular() {
+      const s = [...db.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+      document.getElementById('popularList').innerHTML = s.map((p, i) => `<div class="popular-item"><div class="popular-num">0${i + 1}</div><div><div class="popular-title" onclick="openPost(${p.id})">${p.title}</div><div class="popular-meta">${p.category} · ${p.date}</div></div></div>`).join('');
+    }
 
-function renderAdminPosts(){
-  document.getElementById('adminPostsTbody').innerHTML=db.posts.map((p,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="max-width:220px;font-weight:600;">${p.title}</td><td><span class="badge badge-yellow">${p.category}</span></td><td>${p.author}</td><td>${p.date}</td><td style="color:var(--text2)">${(p.views||0).toLocaleString()}</td><td>${p.trending?'<span class="badge badge-green">🔥 Yes</span>':'<span class="badge" style="background:var(--bg3);color:var(--text3)">No</span>'}</td><td><div class="table-actions"><button class="btn btn-ghost btn-sm" onclick="openPost(${p.id})">👁</button><button class="btn btn-ghost btn-sm" onclick="openCreatePost(${p.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deletePost(${p.id})">🗑</button></div></td></tr>`).join('');
-}
+    function renderCatPills() {
+      const cats = [...new Set(db.posts.map(p => p.category))];
+      document.getElementById('catPills').innerHTML = cats.map(c => `<div class="cat-pill" onclick="filterCat('${c}',null)">${c}</div>`).join('');
+    }
 
-function renderAdminUsers(){
-  document.getElementById('adminUsersTbody').innerHTML=db.users.map((u,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="font-weight:600;">${u.fname} ${u.lname}</td><td>${u.email}</td><td><span class="badge ${u.role==='admin'?'badge-red':'badge-green'}">${u.role}</span></td><td>${u.joined}</td><td>${db.posts.filter(p=>p.authorId===u.id).length}</td><td>${u.role!=='admin'?`<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">🗑 Remove</button>`:'<span style="color:var(--text3);font-size:.8rem;">Protected</span>'}</td></tr>`).join('');
-}
+    function renderSidebar() {
+      const w = db.settings.widgetType, el = document.getElementById('sidebarWidget');
+      if (w === 'banner') {
+        el.innerHTML = `<div class="sidebar-title">🎯 Sponsored</div><a href="${db.settings.bannerLink || '#'}" target="_blank"><img src="${db.settings.bannerUrl}" style="width:100%;height:200px;object-fit:cover;border-radius:var(--radius);" alt="Banner"></a>`;
+      } else {
+        el.innerHTML = `<div class="sidebar-title">📮 Contact Us</div><div class="contact-form"><label>Your Name</label><input type="text" id="cName" placeholder="John Doe"><label>Email</label><input type="email" id="cEmail" placeholder="you@example.com"><label>Message</label><textarea id="cMsg" placeholder="Your message…"></textarea><button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="submitContact()">Send Message</button></div>`;
+      }
+    }
 
-function renderAdminContacts(){
-  document.getElementById('adminContactsTbody').innerHTML=db.contacts.map((c,i)=>`<tr><td style="color:var(--text3)">${i+1}</td><td style="font-weight:600;">${c.name}</td><td>${c.email}</td><td style="max-width:220px;color:var(--text2);">${c.message}</td><td>${c.date}</td><td><button class="btn btn-danger btn-sm" onclick="deleteContact(${c.id})">🗑</button></td></tr>`).join('');
-}
+    function submitContact() {
+      const name = document.getElementById('cName')?.value || '';
+      const email = document.getElementById('cEmail')?.value || '';
+      const message = document.getElementById('cMsg')?.value || '';
+      if (!name || !email || !message) { showNotif('❌ Please fill all fields'); return; }
+      db.contacts.push({ id: Date.now(), name, email, message, date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) });
+      renderAdminContacts(); showNotif("✅ Message sent! We'll get back to you.");
+      document.getElementById('cName').value = ''; document.getElementById('cEmail').value = ''; document.getElementById('cMsg').value = '';
+    }
 
-function renderStats(){
-  document.getElementById('statsRow').innerHTML=`<div class="stat-card"><div class="stat-val">${db.posts.length}</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-val">${db.users.length}</div><div class="stat-label">Registered Users</div></div><div class="stat-card"><div class="stat-val">${db.contacts.length}</div><div class="stat-label">Messages</div></div><div class="stat-card"><div class="stat-val">${db.posts.reduce((a,p)=>a+(p.views||0),0).toLocaleString()}</div><div class="stat-label">Total Views</div></div>`;
-}
+    function openPost(id) {
+      const p = db.posts.find(x => x.id === id); if (!p) return;
+      p.views = (p.views || 0) + 1;
+      document.getElementById('pdImg').src = p.image;
+      document.getElementById('pdCat').innerHTML = `<span class="cat-tag" style="font-size:.85rem;">${p.category}</span>`;
+      document.getElementById('pdTitle').textContent = p.title;
+      document.getElementById('pdMeta').innerHTML = `<span>By <strong>${p.author}</strong></span><span>·</span><span>${p.date}</span><span>·</span><span>👁 ${p.views.toLocaleString()} views</span><span>·</span><span>🏷 ${p.tags || ''}</span>`;
+      document.getElementById('pdContent').innerHTML = p.content || `<p>${p.excerpt}</p>`;
+      document.getElementById('postDetail').classList.add('show'); document.body.style.overflow = 'hidden';
+      renderPosts(); renderPopular();
+    }
 
-function renderRecentActivity(){
-  document.getElementById('recentActivity').innerHTML=db.posts.slice(0,5).map(p=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;"><span>📝</span><div><div style="font-size:.87rem;font-weight:600;">${p.title}</div><div style="font-size:.77rem;color:var(--text3);">By ${p.author} · ${p.date} · ${(p.views||0).toLocaleString()} views</div></div></div>`).join('');
-}
+    function closePostDetail() { document.getElementById('postDetail').classList.remove('show'); document.body.style.overflow = ''; }
 
-function deleteUser(id){if(!confirm('Remove user?'))return;db.users=db.users.filter(u=>u.id!==id);renderAdminUsers();showNotif('🗑️ User removed');}
-function deleteContact(id){db.contacts=db.contacts.filter(c=>c.id!==id);renderAdminContacts();showNotif('🗑️ Message deleted');}
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const q = this.value.trim().toLowerCase(), res = document.getElementById('searchResults');
+      if (!q) { res.style.display = 'none'; return; }
+      const m = db.posts.filter(p => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.tags && p.tags.toLowerCase().includes(q))).slice(0, 6);
+      if (!m.length) { res.style.display = 'none'; return; }
+      res.innerHTML = m.map(p => `<div class="search-result-item" onclick="openPost(${p.id});document.getElementById('searchInput').value='';document.getElementById('searchResults').style.display='none';"><div class="sr-cat">${p.category}</div><div class="sr-title">${p.title}</div></div>`).join('');
+      res.style.display = 'block';
+    });
+    document.addEventListener('click', e => { if (!e.target.closest('.search-bar')) document.getElementById('searchResults').style.display = 'none'; });
 
-function toggleWidgetFields(){document.getElementById('bannerFields').style.display=document.getElementById('sWidgetType').value==='banner'?'block':'none';}
+    function fmt(cmd) { document.getElementById('postContent').focus(); document.execCommand(cmd, false, null); }
+    function fmtBlock(tag) { document.getElementById('postContent').focus(); document.execCommand('formatBlock', false, tag); }
 
-function saveBranding(){
-  db.settings.siteName=document.getElementById('sSiteName').value||'NewsHub';
-  db.settings.logoUrl=document.getElementById('sLogoUrl').value;
-  const n=db.settings.siteName,mid=Math.ceil(n.length/2);
-  document.getElementById('siteName').innerHTML=n.slice(0,mid)+'<span>'+n.slice(mid)+'</span>';
-  if(db.settings.logoUrl)document.getElementById('siteLogo').src=db.settings.logoUrl;
-  showNotif('✅ Branding updated!');
-}
+    function openAdmin() {
+      document.getElementById('adminPanel').classList.add('show'); document.body.style.overflow = 'hidden';
+      renderAll();
+      document.getElementById('sSiteName').value = db.settings.siteName;
+      document.getElementById('sLogoUrl').value = db.settings.logoUrl;
+      document.getElementById('sWidgetType').value = db.settings.widgetType;
+      document.getElementById('sBannerUrl').value = db.settings.bannerUrl || '';
+      document.getElementById('sBannerLink').value = db.settings.bannerLink || '';
+      document.getElementById('sTickerItems').value = db.settings.tickerItems && db.settings.tickerItems.length ? db.settings.tickerItems.join('\n') : '';
+      toggleWidgetFields();
+    }
 
-function saveWidgetSettings(){
-  db.settings.widgetType=document.getElementById('sWidgetType').value;
-  db.settings.bannerUrl=document.getElementById('sBannerUrl').value;
-  db.settings.bannerLink=document.getElementById('sBannerLink').value;
-  renderSidebar();showNotif('✅ Widget updated!');
-}
+    function closeAdmin() { document.getElementById('adminPanel').classList.remove('show'); document.body.style.overflow = ''; }
 
-function saveTicker(){
-  const lines=document.getElementById('sTickerItems').value.split('\n').map(l=>l.trim()).filter(Boolean);
-  if(lines.length){db.settings.tickerItems=lines;const d=[...lines,...lines];document.getElementById('tickerTrack').innerHTML=d.map(l=>`<span>${l}</span>`).join('');}
-  showNotif('✅ Ticker updated!');
-}
+    function adminTab(name) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-nav a').forEach(a => a.classList.remove('active'));
+      document.getElementById('asec-' + name).classList.add('active');
+      document.getElementById('atab-' + name).classList.add('active');
+      const t = { dashboard: '📊 Dashboard', posts: '📝 All Posts', users: '👥 Users', contacts: '📬 Contact Messages', settings: '⚙️ Settings' };
+      document.getElementById('adminTabTitle').textContent = t[name] || name;
+    }
 
-function changeAdminPass(){
-  const np=document.getElementById('sNewPass').value,cp=document.getElementById('sConfPass').value;
-  if(np.length<6){showNotif('❌ Password too short');return;}
-  if(np!==cp){showNotif('❌ Passwords do not match');return;}
-  const a=db.users.find(u=>u.role==='admin');if(a)a.password=np;
-  showNotif('✅ Password updated!');
-}
+    function renderAdminPosts() {
+      document.getElementById('adminPostsTbody').innerHTML = db.posts.map((p, i) => `<tr><td style="color:var(--text3)">${i + 1}</td><td style="max-width:220px;font-weight:600;">${p.title}</td><td><span class="badge badge-yellow">${p.category}</span></td><td>${p.author}</td><td>${p.date}</td><td style="color:var(--text2)">${(p.views || 0).toLocaleString()}</td><td>${p.trending ? '<span class="badge badge-green">🔥 Yes</span>' : '<span class="badge" style="background:var(--bg3);color:var(--text3)">No</span>'}</td><td><div class="table-actions"><button class="btn btn-ghost btn-sm" onclick="openPost(${p.id})">👁</button><button class="btn btn-ghost btn-sm" onclick="openCreatePost(${p.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deletePost(${p.id})">🗑</button></div></td></tr>`).join('');
+    }
 
-function openModal(id){document.getElementById(id).classList.add('show');}
-function closeModal(id){document.getElementById(id).classList.remove('show');}
-function showAlert(id,msg){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.style.display=msg?'block':'none';}
-function showNotif(msg){const n=document.getElementById('notif');n.textContent=msg;n.classList.add('show');setTimeout(()=>n.classList.remove('show'),3000);}
+    function renderAdminUsers() {
+      document.getElementById('adminUsersTbody').innerHTML = db.users.map((u, i) => `<tr><td style="color:var(--text3)">${i + 1}</td><td style="font-weight:600;">${u.fname} ${u.lname}</td><td>${u.email}</td><td><span class="badge ${u.role === 'admin' ? 'badge-red' : 'badge-green'}">${u.role}</span></td><td>${u.joined}</td><td>${db.posts.filter(p => p.authorId === u.id).length}</td><td>${u.role !== 'admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">🗑 Remove</button>` : '<span style="color:var(--text3);font-size:.8rem;">Protected</span>'}</td></tr>`).join('');
+    }
 
-document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});});
+    function renderAdminContacts() {
+      document.getElementById('adminContactsTbody').innerHTML = db.contacts.map((c, i) => `<tr><td style="color:var(--text3)">${i + 1}</td><td style="font-weight:600;">${c.name}</td><td>${c.email}</td><td style="max-width:220px;color:var(--text2);">${c.message}</td><td>${c.date}</td><td><button class="btn btn-danger btn-sm" onclick="deleteContact(${c.id})">🗑</button></td></tr>`).join('');
+    }
 
-seedData();
-renderAll();
-</script>
+    function renderStats() {
+      document.getElementById('statsRow').innerHTML = `<div class="stat-card"><div class="stat-val">${db.posts.length}</div><div class="stat-label">Total Posts</div></div><div class="stat-card"><div class="stat-val">${db.users.length}</div><div class="stat-label">Registered Users</div></div><div class="stat-card"><div class="stat-val">${db.contacts.length}</div><div class="stat-label">Messages</div></div><div class="stat-card"><div class="stat-val">${db.posts.reduce((a, p) => a + (p.views || 0), 0).toLocaleString()}</div><div class="stat-label">Total Views</div></div>`;
+    }
+
+    function renderRecentActivity() {
+      document.getElementById('recentActivity').innerHTML = db.posts.slice(0, 5).map(p => `<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:center;"><span>📝</span><div><div style="font-size:.87rem;font-weight:600;">${p.title}</div><div style="font-size:.77rem;color:var(--text3);">By ${p.author} · ${p.date} · ${(p.views || 0).toLocaleString()} views</div></div></div>`).join('');
+    }
+
+    function deleteUser(id) { if (!confirm('Remove user?')) return; db.users = db.users.filter(u => u.id !== id); renderAdminUsers(); showNotif('🗑️ User removed'); }
+    function deleteContact(id) { db.contacts = db.contacts.filter(c => c.id !== id); renderAdminContacts(); showNotif('🗑️ Message deleted'); }
+
+    function toggleWidgetFields() { document.getElementById('bannerFields').style.display = document.getElementById('sWidgetType').value === 'banner' ? 'block' : 'none'; }
+
+    function saveBranding() {
+      db.settings.siteName = document.getElementById('sSiteName').value || 'NewsHub';
+      db.settings.logoUrl = document.getElementById('sLogoUrl').value;
+      const n = db.settings.siteName, mid = Math.ceil(n.length / 2);
+      document.getElementById('siteName').innerHTML = n.slice(0, mid) + '<span>' + n.slice(mid) + '</span>';
+      if (db.settings.logoUrl) document.getElementById('siteLogo').src = db.settings.logoUrl;
+      showNotif('✅ Branding updated!');
+    }
+
+    function saveWidgetSettings() {
+      db.settings.widgetType = document.getElementById('sWidgetType').value;
+      db.settings.bannerUrl = document.getElementById('sBannerUrl').value;
+      db.settings.bannerLink = document.getElementById('sBannerLink').value;
+      renderSidebar(); showNotif('✅ Widget updated!');
+    }
+
+    function saveTicker() {
+      const lines = document.getElementById('sTickerItems').value.split('\n').map(l => l.trim()).filter(Boolean);
+      if (lines.length) { db.settings.tickerItems = lines; const d = [...lines, ...lines]; document.getElementById('tickerTrack').innerHTML = d.map(l => `<span>${l}</span>`).join(''); }
+      showNotif('✅ Ticker updated!');
+    }
+
+    function changeAdminPass() {
+      const np = document.getElementById('sNewPass').value, cp = document.getElementById('sConfPass').value;
+      if (np.length < 6) { showNotif('❌ Password too short'); return; }
+      if (np !== cp) { showNotif('❌ Passwords do not match'); return; }
+      const a = db.users.find(u => u.role === 'admin'); if (a) a.password = np;
+      showNotif('✅ Password updated!');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    function showAlert(id, msg) { const e = document.getElementById(id); if (!e) return; e.textContent = msg; e.style.display = msg ? 'block' : 'none'; }
+    function showNotif(msg) { const n = document.getElementById('notif'); n.textContent = msg; n.classList.add('show'); setTimeout(() => n.classList.remove('show'), 3000); }
+
+    document.querySelectorAll('.modal-overlay').forEach(o => { o.addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); }); });
+
+    seedData();
+    renderAll();
+  </script>
 </body>
+
 </html>
