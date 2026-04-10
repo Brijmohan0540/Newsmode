@@ -60,6 +60,19 @@ a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}button{c
 .post-card .post-img{width:100%;height:160px;object-fit:cover;}
 .post-card-body{padding:14px;}
 .cat-tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin-bottom:6px;}
+
+.post-card-body .post-excerpt{
+  font-size:.82rem;
+  color:var(--text2);
+  line-height:1.5;
+  margin-bottom:10px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  line-clamp:2;
+}
+
 .post-card-body .post-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px;}
 .post-card-body .post-excerpt{font-size:.82rem;color:var(--text2);line-height:1.5;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .post-meta{font-size:.75rem;color:var(--text3);display:flex;gap:10px;align-items:center;}
@@ -377,7 +390,7 @@ a{color:inherit;text-decoration:none;}img{max-width:100%;display:block;}button{c
 
       <div class="admin-section" id="asec-posts">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <p style="color:var(--text2);font-size:.87rem;">Manage all published posts</p>
+          <p style="color:var(--text2);font-size:.87rem;">Manage all published posts here changed</p>
           <button class="btn btn-primary" onclick="openCreatePost()">+ New Post</button>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;">
